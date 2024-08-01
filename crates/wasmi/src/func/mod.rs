@@ -4,6 +4,7 @@ mod func_type;
 mod funcref;
 mod into_func;
 mod typed_func;
+pub mod shmem;
 
 pub(crate) use self::typed_func::CallResultsTuple;
 pub use self::{
@@ -414,14 +415,18 @@ impl Func {
         inputs: &[Val],
         outputs: &mut [Val],
     ) -> Result<(), Error> {
+
+
         self.verify_and_prepare_inputs_outputs(ctx.as_context(), inputs, outputs)?;
         // Note: Cloning an [`Engine`] is intentionally a cheap operation.
+
         ctx.as_context().store.engine().clone().execute_func(
             ctx.as_context_mut(),
             self,
             inputs,
             outputs,
         )?;
+
         Ok(())
     }
 

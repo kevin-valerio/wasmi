@@ -24,6 +24,7 @@ impl<'engine> Executor<'engine> {
     /// Offsets the instruction pointer using the given [`BranchOffset`].
     #[inline(always)]
     fn branch_to(&mut self, offset: BranchOffset) {
+
         self.ip.offset(offset.to_i32() as isize)
     }
 

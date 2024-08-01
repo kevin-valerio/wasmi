@@ -1,4 +1,15 @@
+use libc::*;
+const MAP_SIZE: usize = 65536;
 use super::Instruction;
+use core::ptr;
+use libafl_bolts::{
+    bolts_prelude::{MmapShMemProvider, StateRestorer},
+    shmem::{ShMemId, ShMemProvider, StdShMemProvider, UnixShMemProvider},
+    AsSliceMut,
+};
+use num_traits::ToPrimitive;
+use std::{env, os::fd::RawFd, string::ToString};
+use crate::func::shmem::SharedMem;
 
 /// The instruction pointer to the instruction of a function on the call stack.
 #[derive(Debug, Copy, Clone)]
@@ -24,6 +35,7 @@ impl InstructionPtr {
         Self { ptr }
     }
 
+
     /// Offset the [`InstructionPtr`] by the given value.
     ///
     /// # Safety
@@ -33,6 +45,9 @@ impl InstructionPtr {
     /// bounds of the instructions of the same compiled Wasm function.
     #[inline(always)]
     pub fn offset(&mut self, by: isize) {
+        SharedMem::save(by);
+
+
         // SAFETY: Within Wasm bytecode execution we are guaranteed by
         //         Wasm validation and Wasmi codegen to never run out
         //         of valid bounds using this method.

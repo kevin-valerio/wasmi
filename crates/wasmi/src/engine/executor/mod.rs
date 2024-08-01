@@ -56,6 +56,7 @@ impl EngineInner {
                 Err(error) => error,
             });
         self.stacks.lock().recycle(stack);
+
         results
     }
 
@@ -196,6 +197,7 @@ impl<'engine> EngineExecutor<'engine> {
         match store.inner.resolve_func(func) {
             FuncEntity::Wasm(wasm_func) => {
                 // We reserve space on the stack to write the results of the root function execution.
+                std::println!("WASM_FUNC = {:?}", wasm_func);
                 let len_results = results.len_results();
                 self.stack.values.extend_by(len_results, do_nothing)?;
                 let instance = *wasm_func.instance();
@@ -211,6 +213,7 @@ impl<'engine> EngineExecutor<'engine> {
                     unsafe { uninit_params.init_next(value) };
                 }
                 uninit_params.init_zeroes();
+                // increment_value("basic_mapping", 444, u8::MAX); kevin
                 self.stack.calls.push(
                     CallFrame::new(
                         InstructionPtr::new(compiled_func.instrs().as_ptr()),

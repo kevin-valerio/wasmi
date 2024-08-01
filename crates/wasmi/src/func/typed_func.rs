@@ -159,6 +159,7 @@ where
 /// via the [`Engine`].
 ///
 /// [`Engine`]: [`crate::Engine`].
+#[derive(Debug)]
 pub struct CallResultsTuple<Results> {
     _marker: PhantomData<fn() -> Results>,
 }

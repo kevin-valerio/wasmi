@@ -1,3 +1,4 @@
+use std::sync::Arc;
 pub use self::call::{dispatch_host_func, ResumableHostError};
 use self::return_::ReturnOutcome;
 use super::{cache::CachedInstance, Stack};
@@ -79,6 +80,7 @@ pub fn execute_instrs<'engine, T>(
     stack: &'engine mut Stack,
     code_map: &'engine CodeMap,
 ) -> Result<(), Error> {
+
     let instance = stack.calls.instance_expect();
     let cache = CachedInstance::new(&mut store.inner, instance);
     Executor::new(stack, code_map, cache).execute(store)
@@ -127,12 +129,18 @@ impl<'engine> Executor<'engine> {
         }
     }
 
+
     /// Executes the function frame until it returns or traps.
     #[inline(always)]
     fn execute<T>(mut self, store: &mut Store<T>) -> Result<(), Error> {
         use Instruction as Instr;
+        // std::println!("execute: {:?} ", instruction);
+
         loop {
-            match *self.ip.get() {
+            let instruction = *self.ip.get();
+
+
+            match instruction {
                 Instr::Trap(trap_code) => self.execute_trap(trap_code)?,
                 Instr::ConsumeFuel(block_fuel) => {
                     self.execute_consume_fuel(&mut store.inner, block_fuel)?
@@ -165,6 +173,9 @@ impl<'engine> Executor<'engine> {
                     forward_return!(self.execute_return_many(&mut store.inner, values))
                 }
                 Instr::ReturnNez { condition } => {
+
+
+
                     forward_return!(self.execute_return_nez(&mut store.inner, condition))
                 }
                 Instr::ReturnNezReg { condition, value } => {

@@ -32,6 +32,9 @@ use crate::{
 };
 use core::num::{NonZeroU32, NonZeroU64};
 use std::collections::BTreeMap;
+use libafl_bolts::AsSliceMut;
+use libafl_bolts::bolts_prelude::{ShMem, ShMemProvider, StdShMemProvider};
+// use libafl_bolts::shmem::{ShMem, ShMemProvider, StdShMemProvider};
 use wasmparser::VisitOperator;
 
 /// Used to swap operands of a `rev` variant [`Instruction`] constructor.
@@ -194,6 +197,7 @@ impl<'a> VisitOperator<'a> for FuncTranslator {
     }
 
     fn visit_if(&mut self, block_type: wasmparser::BlockType) -> Self::Output {
+
         let block_type = BlockType::new(block_type, &self.module);
         if !self.is_reachable() {
             // We keep track of unreachable control flow frames so that we

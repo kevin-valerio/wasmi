@@ -384,9 +384,10 @@ impl Engine {
         results: Results,
     ) -> Result<<Results as CallResults>::Results, Error>
     where
-        Results: CallResults,
+        Results: CallResults  ,
     {
         self.inner.execute_func(ctx, func, params, results)
+
     }
 
     /// Executes the given [`Func`] resumably with parameters `params` and returns.

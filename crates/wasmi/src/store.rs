@@ -129,7 +129,7 @@ pub struct StoreInner {
     /// Used to protect against invalid entity indices.
     store_idx: StoreIdx,
     /// Stored Wasm or host functions.
-    funcs: Arena<FuncIdx, FuncEntity>,
+    pub(crate) funcs: Arena<FuncIdx, FuncEntity>,
     /// Stored linear memories.
     memories: Arena<MemoryIdx, MemoryEntity>,
     /// Stored tables.
